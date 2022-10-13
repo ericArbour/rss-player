@@ -1,19 +1,18 @@
-"use strict";
+import { Sequelize, Model, DataTypes as DataTypesNamespace } from "sequelize";
+type DataTypes = typeof DataTypesNamespace;
 
-const { Model } = require("sequelize");
-
-module.exports = (sequelize, DataTypes) => {
+export const userInitializer = (sequelize: Sequelize, DataTypes: DataTypes) => {
   class User extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
+    static associate() {
       // define association here
     }
   }
-  User.init(
+  User["init"](
     {
       firstName: DataTypes.STRING,
       lastName: DataTypes.STRING,
