@@ -1,17 +1,21 @@
 import { Sequelize, Model, DataTypes as DataTypesNamespace } from "sequelize";
 type DataTypes = typeof DataTypesNamespace;
 
-export const userInitializer = (sequelize: Sequelize, DataTypes: DataTypes) => {
-  class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate() {
-      // define association here
-    }
+class User extends Model {
+  /**
+   * Helper method for defining associations.
+   * This method is not a part of Sequelize lifecycle.
+   * The `models/index` file will call this method automatically.
+   */
+  static associate(): void {
+    // define association here
   }
+}
+
+export const userInitializer = (
+  sequelize: Sequelize,
+  DataTypes: DataTypes
+): typeof User => {
   User["init"](
     {
       firstName: DataTypes.STRING,

@@ -5,7 +5,7 @@ import { User } from "../../../db/models";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
-) {
+): Promise<void> {
   const { id } = req.query;
 
   if (typeof id !== "string") {

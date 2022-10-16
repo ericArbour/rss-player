@@ -9,6 +9,4 @@ const envConfig = config[env];
 
 const sequelize = new Sequelize(envConfig);
 
-console.log("new db instance");
-
 export const User = userInitializer(sequelize, DataTypes);
