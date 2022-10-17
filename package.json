@@ -15,12 +15,15 @@
     "pg-hstore": "^2.3.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "sequelize": "^6.24.0"
+    "sequelize": "^6.24.0",
+    "styled-components": "^5.3.6"
   },
   "devDependencies": {
     "@types/node": "^18.8.3",
     "@types/react": "^18.0.21",
+    "@types/styled-components": "^5.1.26",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "babel-plugin-styled-components": "^2.0.7",
     "eslint": "8.25.0",
     "eslint-config-next": "12.3.1",
     "sequelize-cli": "^6.5.1",
