@@ -1,6 +1,8 @@
-import { Options } from "sequelize";
+// NOTE this has to be a js file for sequelize-cli
 
-const development: Options = {
+require("dotenv").config();
+
+const development = {
   username: process.env["DB_USER"],
   password: process.env["DB_PASS"],
   database: process.env["DB_NAME"],
@@ -8,11 +10,13 @@ const development: Options = {
   dialect: "postgres",
 };
 
-const test: Options = {};
-const production: Options = {};
+const test = {};
+const production = {};
 
-export const config = {
+const config = {
   development,
   test,
   production,
 };
+
+module.exports = config;

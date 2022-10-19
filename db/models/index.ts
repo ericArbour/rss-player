@@ -1,12 +1,9 @@
-import { Sequelize, DataTypes } from "sequelize";
+import { Options, Sequelize } from "sequelize";
 import process from "process";
 
-import { config } from "../config/config";
-import { userInitializer } from "./user";
+import config from "../config/config";
 
 const env = process.env.NODE_ENV || "development";
-const envConfig = config[env];
+const envConfig = config[env] as Options;
 
-const sequelize = new Sequelize(envConfig);
-
-export const User = userInitializer(sequelize, DataTypes);
+export const sequelize = new Sequelize(envConfig);
