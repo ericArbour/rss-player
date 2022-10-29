@@ -220,11 +220,6 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@next-auth/sequelize-adapter@^1.0.6":
-  "integrity" "sha512-jlzdHOeaNzCml/v2YEkny79sw2FCONqJ8s1oinLyPCoCk3limqMNdlWA5C3ojhCVvs9Wi03ePGZM1HibWu8N2A=="
-  "resolved" "https://registry.npmjs.org/@next-auth/sequelize-adapter/-/sequelize-adapter-1.0.6.tgz"
-  "version" "1.0.6"
-
 "@next/env@12.3.1":
   "integrity" "sha512-9P9THmRFVKGKt9DYqeC2aKIxm8rlvkK38V1P1sRE7qyoPBIs8l9oo79QoSdPtOWfzkbDAVUqvbQGgTMsb8BtJg=="
   "resolved" "https://registry.npmjs.org/@next/env/-/env-12.3.1.tgz"
@@ -1845,7 +1840,7 @@
   "resolved" "https://registry.npmjs.org/natural-compare/-/natural-compare-1.4.0.tgz"
   "version" "1.4.0"
 
-"next-auth@^4", "next-auth@^4.14.0":
+"next-auth@^4.14.0":
   "integrity" "sha512-pD5sin6kq/uIx3Cod2/0JFnViEnngBTTNy4CdfRaYc2QzV2zwpWAbQny2Ezlg0GjEozDhKC53JJxRRE4AmNKEw=="
   "resolved" "https://registry.npmjs.org/next-auth/-/next-auth-4.14.0.tgz"
   "version" "4.14.0"
@@ -2357,7 +2352,7 @@
   "resolved" "https://registry.npmjs.org/sequelize-pool/-/sequelize-pool-7.1.0.tgz"
   "version" "7.1.0"
 
-"sequelize@^6.25.3", "sequelize@^6.6.5":
+"sequelize@^6.25.3":
   "integrity" "sha512-sbbvDGft6UfSRdIC0dcZvMxxJYi6g0+IgWvIpTuk6ccEoIyLcr7Sk6nXWwGfkdlDabGeunhhhI4yH8PleVMvtw=="
   "resolved" "https://registry.npmjs.org/sequelize/-/sequelize-6.25.3.tgz"
   "version" "6.25.3"

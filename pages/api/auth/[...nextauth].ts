@@ -1,8 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
-import SequelizeAdapter from "@next-auth/sequelize-adapter";
 import { sequelize } from "../../../db/models";
-
-sequelize.sync();
+import SequelizeAdapter from "../../../db/models/next-auth-adapter";
 
 export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
