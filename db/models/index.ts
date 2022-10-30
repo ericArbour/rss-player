@@ -1,4 +1,4 @@
-import { DataTypes, Options, Sequelize } from "sequelize";
+import { DataTypes, Model, Options, Sequelize } from "sequelize";
 import process from "process";
 
 import config from "../config/config";
@@ -14,21 +14,31 @@ sequelize.sync();
 export const { nextAuthAdapter, nextAuthModels } =
   getNextAuthAdapterAndModels(sequelize);
 
-export const RssFeed = sequelize.define(
-  "rssFeed",
-  {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
-    url: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: { isUrl: true },
-    },
-    userId: { type: DataTypes.UUID, allowNull: false },
+interface RssFeed {
+  id: string;
+  url: string;
+  userId: string;
+}
+
+interface RssFeedInstance extends Model<RssFeed, Partial<RssFeed>>, RssFeed {}
+
+const rssFeedAttributes = {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
   },
+  url: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: { isUrl: true },
+  },
+  userId: { type: DataTypes.UUID, allowNull: false },
+};
+
+export const RssFeed = sequelize.define<RssFeedInstance>(
+  "rssFeed",
+  rssFeedAttributes,
   {
     underscored: true,
     indexes: [

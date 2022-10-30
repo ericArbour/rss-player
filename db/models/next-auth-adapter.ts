@@ -12,7 +12,7 @@ import type {
 } from "next-auth/adapters";
 import { Sequelize, Model, DataTypes, ModelStatic } from "sequelize";
 
-const AccountAttributes = {
+const accountAttributes = {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -31,7 +31,7 @@ const AccountAttributes = {
   userId: { type: DataTypes.UUID },
 };
 
-export const UserAttributes = {
+export const userAttributes = {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -47,7 +47,7 @@ export const UserAttributes = {
   image: { type: DataTypes.STRING },
 };
 
-export const SessionAttributes = {
+export const sessionAttributes = {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -62,7 +62,7 @@ export const SessionAttributes = {
   userId: { type: DataTypes.UUID },
 };
 
-export const VerificationTokenAttributes = {
+export const verificationTokenAttributes = {
   token: { type: DataTypes.STRING, primaryKey: true },
   identifier: { type: DataTypes.STRING, allowNull: false },
   expires: { type: DataTypes.DATE, allowNull: false },
@@ -89,22 +89,22 @@ export function getNextAuthAdapterAndModels(sequelize: Sequelize): {
   const modelOptions = { underscored: true, timestamps: false };
   const User = sequelize.define<UserInstance>(
     "user",
-    UserAttributes,
+    userAttributes,
     modelOptions
   );
   const Account = sequelize.define<AccountInstance>(
     "account",
-    AccountAttributes,
+    accountAttributes,
     modelOptions
   );
   const Session = sequelize.define<SessionInstance>(
     "session",
-    SessionAttributes,
+    sessionAttributes,
     modelOptions
   );
   const VerificationToken = sequelize.define<VerificationTokenInstance>(
     "verificationToken",
-    VerificationTokenAttributes,
+    verificationTokenAttributes,
     modelOptions
   );
 
