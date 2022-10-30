@@ -10,8 +10,63 @@ import type {
   AdapterSession,
   VerificationToken,
 } from "next-auth/adapters";
-import { Sequelize, Model } from "sequelize";
-import * as models from "./next-auth-models";
+import { Sequelize, Model, DataTypes, ModelStatic } from "sequelize";
+
+const AccountAttributes = {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
+  },
+  type: { type: DataTypes.STRING, allowNull: false },
+  provider: { type: DataTypes.STRING, allowNull: false },
+  providerAccountId: { type: DataTypes.STRING, allowNull: false },
+  refresh_token: { type: DataTypes.STRING },
+  access_token: { type: DataTypes.STRING },
+  expires_at: { type: DataTypes.INTEGER },
+  token_type: { type: DataTypes.STRING },
+  scope: { type: DataTypes.STRING },
+  id_token: { type: DataTypes.STRING },
+  session_state: { type: DataTypes.STRING },
+  userId: { type: DataTypes.UUID },
+};
+
+export const UserAttributes = {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
+  },
+  name: { type: DataTypes.STRING },
+  email: {
+    type: DataTypes.STRING,
+    unique: "email",
+    validate: { isEmail: true },
+  },
+  emailVerified: { type: DataTypes.DATE },
+  image: { type: DataTypes.STRING },
+};
+
+export const SessionAttributes = {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
+  },
+  expires: { type: DataTypes.DATE, allowNull: false },
+  sessionToken: {
+    type: DataTypes.STRING,
+    unique: "sessionToken",
+    allowNull: false,
+  },
+  userId: { type: DataTypes.UUID },
+};
+
+export const VerificationTokenAttributes = {
+  token: { type: DataTypes.STRING, primaryKey: true },
+  identifier: { type: DataTypes.STRING, allowNull: false },
+  expires: { type: DataTypes.DATE, allowNull: false },
+};
 
 // @see https://sequelize.org/master/manual/typescript.html
 interface AccountInstance
@@ -27,29 +82,36 @@ interface VerificationTokenInstance
   extends Model<VerificationToken, Partial<VerificationToken>>,
     VerificationToken {}
 
-export default function SequelizeAdapter(client: Sequelize): Adapter {
+export function getNextAuthAdapterAndModels(sequelize: Sequelize): {
+  nextAuthAdapter: Adapter;
+  nextAuthModels: { User: ModelStatic<UserInstance> };
+} {
   const modelOptions = { underscored: true, timestamps: false };
-  const User = client.define<UserInstance>("user", models.User, modelOptions);
-  const Account = client.define<AccountInstance>(
+  const User = sequelize.define<UserInstance>(
+    "user",
+    UserAttributes,
+    modelOptions
+  );
+  const Account = sequelize.define<AccountInstance>(
     "account",
-    models.Account,
+    AccountAttributes,
     modelOptions
   );
-  const Session = client.define<SessionInstance>(
+  const Session = sequelize.define<SessionInstance>(
     "session",
-    models.Session,
+    SessionAttributes,
     modelOptions
   );
-  const VerificationToken = client.define<VerificationTokenInstance>(
+  const VerificationToken = sequelize.define<VerificationTokenInstance>(
     "verificationToken",
-    models.VerificationToken,
+    VerificationTokenAttributes,
     modelOptions
   );
 
   Account.belongsTo(User, { onDelete: "cascade" });
   Session.belongsTo(User, { onDelete: "cascade" });
 
-  return {
+  const nextAuthAdapter: Adapter = {
     async createUser(user): Promise<UserInstance> {
       return await User.create(user);
     },
@@ -159,4 +221,6 @@ export default function SequelizeAdapter(client: Sequelize): Adapter {
       return tokenInstance?.get({ plain: true }) ?? null;
     },
   };
+
+  return { nextAuthAdapter, nextAuthModels: { User } };
 }

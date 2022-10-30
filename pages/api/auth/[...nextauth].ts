@@ -1,7 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
-import { sequelize } from "../../../db/models";
-import SequelizeAdapter from "../../../db/models/next-auth-adapter";
+import { nextAuthAdapter } from "../../../db/models";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -17,7 +16,7 @@ export const authOptions: NextAuthOptions = {
       from: process.env["EMAIL_FROM"],
     }),
   ],
-  adapter: SequelizeAdapter(sequelize),
+  adapter: nextAuthAdapter,
 };
 
 export default NextAuth(authOptions);
