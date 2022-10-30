@@ -57,7 +57,7 @@ function Content(): JSX.Element {
       <Header>
         <Title>RSS Player</Title>
         <SignedInUser>
-          <p>Hello {session.user?.email}!</p>
+          <p>Hello {session.user.email}!</p>
           <Button onClick={(): Promise<undefined> => signOut()}>
             Sign out
           </Button>

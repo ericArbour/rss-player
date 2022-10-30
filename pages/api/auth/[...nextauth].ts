@@ -1,6 +1,14 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
+import type { DefaultUser } from "next-auth";
+
 import { nextAuthAdapter } from "../../../db/models";
+
+declare module "next-auth" {
+  interface Session {
+    user: DefaultUser;
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -17,6 +25,19 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   adapter: nextAuthAdapter,
+  callbacks: {
+    session: ({ session, user }) => {
+      return {
+        ...session,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+        },
+      };
+    },
+  },
 };
 
 export default NextAuth(authOptions);
