@@ -1,19 +1,19 @@
 import Head from "next/head";
 import styled from "styled-components";
-import { signIn, signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 import { authOptions } from "./api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next";
 import { GetServerSideProps } from "next";
 import { Session } from "next-auth";
 
-interface HomeProps {
+interface WithPossibleSession {
   session: Session | null;
 }
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async (
-  context
-) => {
+export const getServerSideProps: GetServerSideProps<
+  WithPossibleSession
+> = async (context) => {
   const session = await unstable_getServerSession(
     context.req,
     context.res,
@@ -27,7 +27,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async (
   };
 };
 
-export default function Home({ session }: HomeProps): JSX.Element {
+export default function Home(): JSX.Element {
   return (
     <Container>
       <Head>
@@ -35,12 +35,13 @@ export default function Home({ session }: HomeProps): JSX.Element {
         <meta name="description" content="A simple RSS player for podcasts." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Content session={session} />
+      <Content />
     </Container>
   );
 }
 
-function Content({ session }: HomeProps): JSX.Element {
+function Content(): JSX.Element {
+  const { data: session } = useSession();
   if (!session) {
     return (
       <Main centerVertically>
