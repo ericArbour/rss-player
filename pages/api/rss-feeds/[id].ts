@@ -48,8 +48,8 @@ export default async function handler(
     }
 
     res.status(200).json(rssFeed);
-  } catch {
+  } catch (e) {
     res.status(500); // Internal Server Error
-    res.end();
+    res.end(e instanceof Error ? e.message : null);
   }
 }

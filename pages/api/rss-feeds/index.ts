@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
+import { ValidationError } from "sequelize";
+import { RssFeed } from "../../../db/models";
 
 import { authOptions } from "../auth/[...nextauth]";
 
@@ -14,17 +16,36 @@ export default async function handler(
     return;
   }
 
-  const { method } = req;
+  const { method, body } = req;
 
-  switch (method) {
-    case "GET":
-      res.status(200).json({ id: "test" });
-      break;
-    case "POST":
-      res.status(201).json({ id: "test" });
-      break;
-    default:
-      res.setHeader("Allow", ["GET", "POST"]);
-      res.status(405).end(`Method ${method} Not Allowed`);
+  if (method === "GET") {
+    const rssFeeds = await RssFeed.findAll({
+      where: { userId: session.user.id },
+    });
+    res.status(200).json(rssFeeds);
+    return;
+  }
+
+  if (method !== "POST") {
+    res.setHeader("Allow", ["GET", "POST"]);
+    res.status(405).end(`Method ${method} Not Allowed`);
+  }
+
+  try {
+    const rssFeed = await RssFeed.create({
+      userId: session.user.id,
+      url: body.url,
+    });
+
+    res.status(201).json(rssFeed);
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      res.status(400); // Bad Request
+      res.end(e.message);
+      return;
+    }
+
+    res.status(500); // Internal Server Error
+    res.end(e instanceof Error ? e.message : null);
   }
 }

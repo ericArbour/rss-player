@@ -41,6 +41,7 @@ export const RssFeed = sequelize.define<RssFeedInstance>(
   rssFeedAttributes,
   {
     underscored: true,
+    timestamps: false,
     indexes: [
       {
         unique: true,
