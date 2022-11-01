@@ -1,5 +1,5 @@
 import { XMLParser, XMLValidator } from "fast-xml-parser";
-import { Episode, Podcast, podcastEpisodeTypes } from "../types";
+import { Episode, Podcast, podcastEpisodeTypes, RssFeedDto } from "../types";
 
 const xmlParser = new XMLParser({
   ignoreAttributes: false,
@@ -12,7 +12,7 @@ interface ParsedPodcastFeedItem {
     "#text": string;
   };
   pubDate: string;
-  enclosure: {
+  enclosure?: {
     "@_url": string;
     "@_length": string;
     "@_type": string;
@@ -20,8 +20,9 @@ interface ParsedPodcastFeedItem {
   description: string;
   "itunes:episodeType"?: typeof podcastEpisodeTypes[number];
   "itunes:episode"?: number;
-  "itunes:duration": string;
-  "itunes:summary": string;
+  "itunes:duration"?: string;
+  "itunes:summary"?: string;
+  "itunes:subtitle"?: string;
 }
 
 interface ParsedPodcastFeed {
@@ -48,66 +49,86 @@ function isParsedPodcastFeedItem(
 ): parsedXmlItem is ParsedPodcastFeedItem {
   if (!isObject(parsedXmlItem)) return false;
 
-  if (typeof (parsedXmlItem as ParsedPodcastFeedItem).title !== "string")
+  if (typeof (parsedXmlItem as ParsedPodcastFeedItem).title !== "string") {
     return false;
+  }
 
-  if (typeof (parsedXmlItem as ParsedPodcastFeedItem).link !== "string")
+  if (typeof (parsedXmlItem as ParsedPodcastFeedItem).link !== "string") {
     return false;
+  }
 
   if (
     typeof (parsedXmlItem as ParsedPodcastFeedItem).guid?.["#text"] !== "string"
-  )
+  ) {
     return false;
+  }
 
-  if (typeof (parsedXmlItem as ParsedPodcastFeedItem).pubDate !== "string")
+  if (typeof (parsedXmlItem as ParsedPodcastFeedItem).pubDate !== "string") {
     return false;
-
-  if (
-    typeof (parsedXmlItem as ParsedPodcastFeedItem).enclosure?.["@_url"] !==
-    "string"
-  )
-    return false;
+  }
 
   if (
-    typeof (parsedXmlItem as ParsedPodcastFeedItem).enclosure?.["@_length"] !==
-    "string"
-  )
+    !["string", "undefined"].includes(
+      typeof (parsedXmlItem as ParsedPodcastFeedItem).enclosure?.["@_url"]
+    )
+  ) {
     return false;
+  }
 
   if (
-    typeof (parsedXmlItem as ParsedPodcastFeedItem).enclosure?.["@_type"] !==
-    "string"
-  )
+    !["string", "undefined"].includes(
+      typeof (parsedXmlItem as ParsedPodcastFeedItem).enclosure?.["@_length"]
+    )
+  ) {
     return false;
+  }
 
-  if (typeof (parsedXmlItem as ParsedPodcastFeedItem).description !== "string")
+  if (
+    !["string", "undefined"].includes(
+      typeof (parsedXmlItem as ParsedPodcastFeedItem).enclosure?.["@_type"]
+    )
+  ) {
     return false;
+  }
+
+  if (
+    typeof (parsedXmlItem as ParsedPodcastFeedItem).description !== "string"
+  ) {
+    return false;
+  }
 
   if (
     ![...podcastEpisodeTypes, undefined].includes(
       (parsedXmlItem as ParsedPodcastFeedItem)["itunes:episodeType"]
     )
-  )
+  ) {
     return false;
+  }
 
   if (
-    !["number", "undefined"].includes(
+    !["number", "undefined", "string"].includes(
       typeof (parsedXmlItem as ParsedPodcastFeedItem)["itunes:episode"]
     )
-  )
+  ) {
     return false;
+  }
 
   if (
-    typeof (parsedXmlItem as ParsedPodcastFeedItem)["itunes:duration"] !==
-    "string"
-  )
+    !["string", "undefined"].includes(
+      typeof (parsedXmlItem as ParsedPodcastFeedItem)["itunes:duration"]
+    )
+  ) {
     return false;
+  }
 
   if (
     typeof (parsedXmlItem as ParsedPodcastFeedItem)["itunes:summary"] !==
-    "string"
-  )
+      "string" &&
+    typeof (parsedXmlItem as ParsedPodcastFeedItem)["itunes:subtitle"] !==
+      "string"
+  ) {
     return false;
+  }
 
   return true;
 }
@@ -115,46 +136,56 @@ function isParsedPodcastFeedItem(
 function isParsedPodcastFeed(
   parsedXmlFeed: unknown
 ): parsedXmlFeed is ParsedPodcastFeed {
-  if (!isObject((parsedXmlFeed as ParsedPodcastFeed)?.rss?.channel))
+  if (!isObject((parsedXmlFeed as ParsedPodcastFeed)?.rss?.channel)) {
     return false;
+  }
 
   if (
     typeof (parsedXmlFeed as ParsedPodcastFeed).rss.channel.title !== "string"
-  )
+  ) {
     return false;
+  }
 
-  if (typeof (parsedXmlFeed as ParsedPodcastFeed).rss.channel.link !== "string")
+  if (
+    typeof (parsedXmlFeed as ParsedPodcastFeed).rss.channel.link !== "string"
+  ) {
     return false;
+  }
 
   if (
     typeof (parsedXmlFeed as ParsedPodcastFeed).rss.channel["itunes:author"] !==
     "string"
-  )
+  ) {
     return false;
+  }
 
   if (
     typeof (parsedXmlFeed as ParsedPodcastFeed).rss.channel[
       "itunes:summary"
     ] !== "string"
-  )
+  ) {
     return false;
+  }
 
   if (
     typeof (parsedXmlFeed as ParsedPodcastFeed).rss.channel["itunes:image"]?.[
       "@_href"
     ] !== "string"
-  )
+  ) {
     return false;
+  }
 
-  if (!Array.isArray((parsedXmlFeed as ParsedPodcastFeed).rss.channel.item))
+  if (!Array.isArray((parsedXmlFeed as ParsedPodcastFeed).rss.channel.item)) {
     return false;
+  }
 
   if (
     !(parsedXmlFeed as ParsedPodcastFeed).rss.channel.item.every(
       isParsedPodcastFeedItem
     )
-  )
+  ) {
     return false;
+  }
 
   return true;
 }
@@ -184,6 +215,7 @@ function parsedPodcastFeedItemToEpisode(
     "itunes:episode": episodeNumber,
     "itunes:duration": duration,
     "itunes:summary": summary,
+    "itunes:subtitle": subtitle,
   } = parsedPodcastFeedItem;
 
   return {
@@ -194,17 +226,20 @@ function parsedPodcastFeedItemToEpisode(
     description,
     episodeType: episodeType ?? null,
     episodeNumber: episodeNumber ?? null,
-    duration,
-    summary,
-    file: {
-      src: enclosure["@_url"],
-      length: enclosure["@_length"],
-      type: enclosure["@_type"],
-    },
+    duration: duration ?? null,
+    summary: summary ?? subtitle ?? "",
+    file: enclosure
+      ? {
+          src: enclosure["@_url"],
+          length: enclosure["@_length"],
+          type: enclosure["@_type"],
+        }
+      : null,
   };
 }
 
 function parsedPodcastFeedToPodcast(
+  id: string,
   parsedPodcastFeed: ParsedPodcastFeed
 ): Podcast {
   const {
@@ -217,6 +252,7 @@ function parsedPodcastFeedToPodcast(
   } = parsedPodcastFeed.rss.channel;
 
   return {
+    id,
     title,
     link,
     author,
@@ -226,10 +262,10 @@ function parsedPodcastFeedToPodcast(
   };
 }
 
-export async function fetchPodcast(rssUrl: string): Promise<Podcast> {
-  const response = await fetch(rssUrl);
+export async function fetchPodcast(rssFeed: RssFeedDto): Promise<Podcast> {
+  const response = await fetch(rssFeed.url);
   const text = await response.text();
   const parsedPodcastFeed = parsePodcastFeed(text);
-  const podcast = parsedPodcastFeedToPodcast(parsedPodcastFeed);
+  const podcast = parsedPodcastFeedToPodcast(rssFeed.id, parsedPodcastFeed);
   return podcast;
 }

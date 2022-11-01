@@ -13,13 +13,14 @@ export interface Episode {
   pubDate: string;
   description: string;
   episodeType: typeof podcastEpisodeTypes[number] | null;
-  episodeNumber: number | null;
-  duration: string;
+  episodeNumber: number | string | null;
+  duration: string | null;
   summary: string;
-  file: File;
+  file: File | null;
 }
 
 export interface Podcast {
+  id: string;
   title: string;
   link: string;
   author: string;

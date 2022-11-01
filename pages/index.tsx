@@ -8,7 +8,7 @@ import { unstable_getServerSession } from "next-auth/next";
 import { GetServerSideProps } from "next";
 import { Session } from "next-auth";
 import { RssFeed } from "../db/models";
-import { RssFeedDto } from "../types";
+import { RssFeedDto, Podcast } from "../types";
 import Link from "next/link";
 import { fetchPodcast } from "../utils/rss";
 
@@ -69,6 +69,7 @@ export default function Home(props: HomeProps): JSX.Element {
 
 function Content({ rssFeeds }: HomeProps): JSX.Element {
   const { data: session } = useSession();
+
   if (!session) {
     return (
       <Main centerVertically>
@@ -90,37 +91,68 @@ function Content({ rssFeeds }: HomeProps): JSX.Element {
           </Button>
         </SignedInUser>
       </Header>
-      <Grid>
-        {rssFeeds.map((rssFeed) => {
-          console.log(rssFeed);
-          return <PodcastCard key={rssFeed.id} {...rssFeed} />;
-        })}
-      </Grid>
+      <PodcastCards rssFeeds={rssFeeds} />
     </Main>
   );
 }
 
-interface PodcastCardProps {
-  id: string;
-  url: string;
+interface PodcastCardsProps {
+  rssFeeds: RssFeedDto[];
 }
 
-function PodcastCard({ id, url }: PodcastCardProps): JSX.Element {
-  const { error, data, status } = useQuery([url], () => fetchPodcast(url));
+function PodcastCards({ rssFeeds }: PodcastCardsProps): JSX.Element {
+  const { error, data, status } = useQuery(["rss-feeds"], async () => {
+    const promises = rssFeeds.map((rssFeed) => fetchPodcast(rssFeed));
+    const settledResults = await Promise.allSettled(promises);
+    const rejects = settledResults
+      .filter(
+        (settledResult): settledResult is PromiseRejectedResult =>
+          settledResult.status === "rejected"
+      )
+      .map((settledResult, index) => ({
+        rssFeed: rssFeeds[index],
+        reason: settledResult.reason,
+      }));
+    const podcasts = settledResults
+      .filter(
+        (settledResult): settledResult is PromiseFulfilledResult<Podcast> =>
+          settledResult.status === "fulfilled"
+      )
+      .map((settledResult) => settledResult.value);
+    return { rejects, podcasts };
+  });
 
-  if (status === "loading") return <Card>Loading...</Card>;
+  if (status === "loading") return <div>Loading...</div>;
   if (status === "error") {
     console.error(error);
-    return <Card>Something went wrong...</Card>;
+    return <div>Something went wrong...</div>;
+  }
+
+  if (data.rejects.length) {
+    console.error(data.rejects);
   }
 
   return (
-    <Link href={`/podcasts/${id}`}>
+    <Grid>
+      {data.podcasts.map((podcast) => {
+        return <PodcastCard key={podcast.id} podcast={podcast} />;
+      })}
+    </Grid>
+  );
+}
+
+interface PodcastCardProps {
+  podcast: Podcast;
+}
+
+function PodcastCard({ podcast }: PodcastCardProps): JSX.Element {
+  return (
+    <Link href={`/podcasts/${podcast.id}`}>
       <Card>
-        <h2>{data?.title}</h2>
+        <h2>{podcast.title}</h2>
         {/* next/image can't be used because the domains are not statically known */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={data.imageSrc} alt="Title Image" width="100%" />
+        <img src={podcast.imageSrc} alt="Title Image" width="100%" />
       </Card>
     </Link>
   );
@@ -198,7 +230,7 @@ const Card = styled.a`
 
   & h2 {
     margin: 0 0 1rem 0;
-    font-size: 1.5rem;
+    font-size: 1rem;
   }
 
   & p {
