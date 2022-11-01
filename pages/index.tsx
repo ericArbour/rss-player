@@ -1,33 +1,60 @@
 import Head from "next/head";
 import styled from "styled-components";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
 
 import { authOptions } from "./api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next";
 import { GetServerSideProps } from "next";
 import { Session } from "next-auth";
+import { RssFeed } from "../db/models";
+import { RssFeedDto } from "../types";
+import Link from "next/link";
+import { fetchPodcast } from "../utils/rss";
 
-interface WithPossibleSession {
+interface HomeProps {
   session: Session | null;
+  rssFeeds: RssFeedDto[];
 }
 
-export const getServerSideProps: GetServerSideProps<
-  WithPossibleSession
-> = async (context) => {
+/**
+ * Per the NextAuth docs, returning the session prop
+ * from getServerSideProps makes it available to the
+ * SessionProvider in _app, which is why we don't
+ * consume this prop directly in this component and
+ * instead access it from useSession below.
+ */
+export const getServerSideProps: GetServerSideProps<HomeProps> = async (
+  context
+) => {
   const session = await unstable_getServerSession(
     context.req,
     context.res,
     authOptions
   );
 
+  if (!session)
+    return {
+      props: {
+        session,
+        rssFeeds: [],
+      },
+    };
+
+  const rssFeeds = await RssFeed.findAll({
+    where: { userId: session.user.id },
+    raw: true,
+  });
+
   return {
     props: {
       session,
+      rssFeeds,
     },
   };
 };
 
-export default function Home(): JSX.Element {
+export default function Home(props: HomeProps): JSX.Element {
   return (
     <Container>
       <Head>
@@ -35,12 +62,12 @@ export default function Home(): JSX.Element {
         <meta name="description" content="A simple RSS player for podcasts." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Content />
+      <Content {...props} />
     </Container>
   );
 }
 
-function Content(): JSX.Element {
+function Content({ rssFeeds }: HomeProps): JSX.Element {
   const { data: session } = useSession();
   if (!session) {
     return (
@@ -64,24 +91,38 @@ function Content(): JSX.Element {
         </SignedInUser>
       </Header>
       <Grid>
-        <Card href="https://nextjs.org/docs">
-          <h2>Documentation &rarr;</h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </Card>
-        <Card href="https://nextjs.org/learn">
-          <h2>Learn &rarr;</h2>
-          <p>Learn about Next.js in an interactive course with quizzes!</p>
-        </Card>
-        <Card href="https://github.com/vercel/next.js/tree/canary/examples">
-          <h2>Examples &rarr;</h2>
-          <p>Discover and deploy boilerplate example Next.js projects.</p>
-        </Card>
-        <Card href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app">
-          <h2>Deploy &rarr;</h2>
-          <p>Instantly deploy your Next.js site to a public URL with Vercel.</p>
-        </Card>
+        {rssFeeds.map((rssFeed) => {
+          console.log(rssFeed);
+          return <PodcastCard key={rssFeed.id} {...rssFeed} />;
+        })}
       </Grid>
     </Main>
+  );
+}
+
+interface PodcastCardProps {
+  id: string;
+  url: string;
+}
+
+function PodcastCard({ id, url }: PodcastCardProps): JSX.Element {
+  const { error, data, status } = useQuery([url], () => fetchPodcast(url));
+
+  if (status === "loading") return <Card>Loading...</Card>;
+  if (status === "error") {
+    console.error(error);
+    return <Card>Something went wrong...</Card>;
+  }
+
+  return (
+    <Link href={`/podcasts/${id}`}>
+      <Card>
+        <h2>{data?.title}</h2>
+        {/* next/image can't be used because the domains are not statically known */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={data.imageSrc} alt="Title Image" width="100%" />
+      </Card>
+    </Link>
   );
 }
 

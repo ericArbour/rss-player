@@ -27,3 +27,8 @@ export interface Podcast {
   imageSrc: string;
   episodes: Episode[];
 }
+
+export interface RssFeedDto {
+  id: string;
+  url: string;
+}

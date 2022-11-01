@@ -159,19 +159,15 @@ function isParsedPodcastFeed(
   return true;
 }
 
-function parsePodcastFeed(text: string): ParsedPodcastFeed | null {
+function parsePodcastFeed(text: string): ParsedPodcastFeed {
   const isValidOrError = XMLValidator.validate(text);
-  if (isValidOrError !== true) {
-    console.error(isValidOrError);
-    return null;
-  }
+  if (isValidOrError !== true) throw isValidOrError;
 
   const parsedXmlFeed: unknown = xmlParser.parse(text);
-  const parsedPodcastFeed = isParsedPodcastFeed(parsedXmlFeed)
-    ? parsedXmlFeed
-    : null;
+  if (!isParsedPodcastFeed(parsedXmlFeed))
+    throw new Error("RSS XML is not a valid podcast.");
 
-  return parsedPodcastFeed;
+  return parsedXmlFeed;
 }
 
 function parsedPodcastFeedItemToEpisode(
@@ -230,12 +226,10 @@ function parsedPodcastFeedToPodcast(
   };
 }
 
-export async function fetchPodcast(rssUrl: string): Promise<Podcast | null> {
+export async function fetchPodcast(rssUrl: string): Promise<Podcast> {
   const response = await fetch(rssUrl);
   const text = await response.text();
   const parsedPodcastFeed = parsePodcastFeed(text);
-  if (!parsedPodcastFeed) return null;
-
   const podcast = parsedPodcastFeedToPodcast(parsedPodcastFeed);
   return podcast;
 }

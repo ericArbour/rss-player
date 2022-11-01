@@ -1,8 +1,11 @@
 import { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import type { Session } from "next-auth";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "./globals.css";
+
+const queryClient = new QueryClient();
 
 type WithSession = {
   session: Session;
@@ -14,7 +17,9 @@ export default function App({
 }: AppProps<WithSession>): JSX.Element {
   return (
     <SessionProvider session={pageProps.session}>
-      <Component {...pageProps} />
+      <QueryClientProvider client={queryClient}>
+        <Component {...pageProps} />
+      </QueryClientProvider>
     </SessionProvider>
   );
 }
