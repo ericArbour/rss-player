@@ -2,13 +2,15 @@ import { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import type { Session } from "next-auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import styled from "styled-components";
+import Head from "next/head";
 
 import "./globals.css";
 
 const queryClient = new QueryClient();
 
 type WithSession = {
-  session: Session;
+  session: Session | null;
 };
 
 export default function App({
@@ -18,8 +20,22 @@ export default function App({
   return (
     <SessionProvider session={pageProps.session}>
       <QueryClientProvider client={queryClient}>
-        <Component {...pageProps} />
+        <Container>
+          <Head>
+            <title>RSS Player</title>
+            <meta
+              name="description"
+              content="A simple RSS player for podcasts."
+            />
+            <link rel="icon" href="/favicon.ico" />
+          </Head>
+          <Component {...pageProps} />
+        </Container>
       </QueryClientProvider>
     </SessionProvider>
   );
 }
+
+const Container = styled.div`
+  padding: 0 2rem;
+`;

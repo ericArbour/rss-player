@@ -1,13 +1,14 @@
-import Head from "next/head";
 import { useQuery } from "@tanstack/react-query";
-
-import { authOptions } from "../api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next";
 import { GetServerSideProps } from "next";
 import { Session } from "next-auth";
+
+import { authOptions } from "../api/auth/[...nextauth]";
 import { RssFeed } from "../../db/models";
 import { RssFeedDto } from "../../types";
 import { fetchPodcast } from "../../utils/rss";
+import { Main } from "../../components/main";
+import { SignedInHeader } from "../../components/signed-in-header";
 
 interface PodcastProps {
   session: Session;
@@ -57,7 +58,23 @@ export const getServerSideProps: GetServerSideProps<PodcastProps> = async (
   }
 };
 
-export default function PodcastPage({ rssFeed }: PodcastProps): JSX.Element {
+export default function PodcastPage({
+  rssFeed,
+  session,
+}: PodcastProps): JSX.Element {
+  return (
+    <Main>
+      <SignedInHeader session={session} />
+      <Content rssFeed={rssFeed} />
+    </Main>
+  );
+}
+
+interface ContentProps {
+  rssFeed: RssFeedDto;
+}
+
+function Content({ rssFeed }: ContentProps): JSX.Element {
   const { error, data, status } = useQuery([`podcast-${rssFeed.id}`], () =>
     fetchPodcast(rssFeed)
   );
@@ -68,14 +85,5 @@ export default function PodcastPage({ rssFeed }: PodcastProps): JSX.Element {
     return <div>Something went wrong...</div>;
   }
 
-  return (
-    <div>
-      <Head>
-        <title>{data.title}</title>
-        <meta name="description" content="A simple RSS player for podcasts." />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      {data.title}
-    </div>
-  );
+  return <div>{data.title}</div>;
 }
