@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 
 import { Podcast, RssFeedDto } from "../types";
+import { queryClient } from "../utils/react-query";
 import { fetchPodcast } from "../utils/rss";
 import { PodcastCard } from "./podcast-card";
 
@@ -28,6 +29,13 @@ export function PodcastCards({ rssFeeds }: PodcastCardsProps): JSX.Element {
           settledResult.status === "fulfilled"
       )
       .map((settledResult) => settledResult.value);
+
+    // Manually set each podcast in the cache so the individual pages can
+    // leverage caching if the user navigates one.
+    podcasts.forEach((podcast) => {
+      queryClient.setQueryData([`podcast-${podcast.id}`], podcast);
+    });
+
     return { rejects, podcasts };
   });
 

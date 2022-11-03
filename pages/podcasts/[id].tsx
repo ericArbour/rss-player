@@ -85,5 +85,30 @@ function Content({ rssFeed }: ContentProps): JSX.Element {
     return <div>Something went wrong...</div>;
   }
 
-  return <div>{data.title}</div>;
+  return (
+    <div>
+      <h2>{data.title}</h2>
+      {/* next/image can't be used because the domains are not statically known */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={data.imageSrc} alt="Title Image" width="100%" />
+      <p>{data.author}</p>
+      <p>{data.summary}</p>
+      <ul>
+        {data.episodes.map((episode) => {
+          return (
+            <li key={episode.id}>
+              <p>{episode.title}</p>
+              <p>{episode.pubDate}</p>
+              <p>{episode.description}</p>
+              {episode.file && (
+                <audio controls>
+                  <source src={episode.file.src} type={episode.file.type} />
+                </audio>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
 }
