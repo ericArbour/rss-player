@@ -28,7 +28,7 @@ const CardLink = styled.a`
   border: 1px solid #eaeaea;
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
-  max-width: 300px;
+  max-width: 18.75rem;
 
   & h2 {
     margin: 0 0 1rem 0;

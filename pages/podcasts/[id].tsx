@@ -9,6 +9,7 @@ import { RssFeedDto } from "../../types";
 import { fetchPodcast } from "../../utils/rss";
 import { Main } from "../../components/main";
 import { SignedInHeader } from "../../components/signed-in-header";
+import styled from "styled-components";
 
 interface PodcastProps {
   session: Session;
@@ -86,11 +87,11 @@ function Content({ rssFeed }: ContentProps): JSX.Element {
   }
 
   return (
-    <div>
+    <Container>
       <h2>{data.title}</h2>
-      {/* next/image can't be used because the domains are not statically known */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={data.imageSrc} alt="Title Image" width="100%" />
+      <a href={data.link} target="_blank" rel="noreferrer">
+        <Img src={data.imageSrc} alt="Title Image" />
+      </a>
       <p>{data.author}</p>
       <p>{data.summary}</p>
       <ul>
@@ -100,15 +101,21 @@ function Content({ rssFeed }: ContentProps): JSX.Element {
               <p>{episode.title}</p>
               <p>{episode.pubDate}</p>
               <p>{episode.description}</p>
-              {episode.file && (
-                <audio controls>
-                  <source src={episode.file.src} type={episode.file.type} />
-                </audio>
-              )}
             </li>
           );
         })}
       </ul>
-    </div>
+    </Container>
   );
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 50rem;
+`;
+
+const Img = styled.img`
+  max-width: 20rem;
+`;

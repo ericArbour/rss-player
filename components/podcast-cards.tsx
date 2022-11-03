@@ -63,6 +63,6 @@ const Grid = styled.div`
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  max-width: 800px;
+  max-width: 50rem;
   margin-top: 1.5rem;
 `;

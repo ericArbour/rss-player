@@ -3,6 +3,7 @@ import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import { Button } from "./button";
 import { Title } from "./title";
+import Link from "next/link";
 
 interface SignedInHeaderProps {
   session: Session;
@@ -11,7 +12,12 @@ interface SignedInHeaderProps {
 export function SignedInHeader({ session }: SignedInHeaderProps): JSX.Element {
   return (
     <Header>
-      <Title>RSS Player</Title>
+      <Link href="/" passHref>
+        <a>
+          <Title>RSS Player</Title>
+        </a>
+      </Link>
+
       <UserControls>
         <p>Hello {session.user.email}!</p>
         <Button onClick={(): Promise<undefined> => signOut()}>Sign out</Button>
@@ -22,6 +28,7 @@ export function SignedInHeader({ session }: SignedInHeaderProps): JSX.Element {
 
 const Header = styled.header`
   width: 100%;
+  padding: 0.5rem;
   display: flex;
   border-bottom: 1px solid #eaeaea;
   justify-content: space-between;
