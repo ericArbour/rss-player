@@ -63,7 +63,10 @@ function isParsedPodcastFeedItem(
     return false;
   }
 
-  if (typeof (parsedXmlItem as ParsedPodcastFeedItem).pubDate !== "string") {
+  if (
+    typeof (parsedXmlItem as ParsedPodcastFeedItem).pubDate !== "string" ||
+    isNaN(Date.parse((parsedXmlItem as ParsedPodcastFeedItem).pubDate))
+  ) {
     return false;
   }
 
@@ -222,7 +225,7 @@ function parsedPodcastFeedItemToEpisode(
     id: guid["#text"],
     title,
     link,
-    pubDate,
+    pubDate: new Date(pubDate),
     description,
     episodeType: episodeType ?? null,
     episodeNumber: episodeNumber ?? null,

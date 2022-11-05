@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { unstable_getServerSession } from "next-auth/next";
 import { GetServerSideProps } from "next";
 import { Session } from "next-auth";
+import sanitizeHtml from "sanitize-html";
 
 import { authOptions } from "../api/auth/[...nextauth]";
 import { RssFeed } from "../../db/models";
@@ -10,6 +11,7 @@ import { fetchPodcast } from "../../utils/rss";
 import { Main } from "../../components/main";
 import { SignedInHeader } from "../../components/signed-in-header";
 import styled from "styled-components";
+import { cardEffect } from "../../utils/style-mixins";
 
 interface PodcastProps {
   session: Session;
@@ -94,17 +96,23 @@ function Content({ rssFeed }: ContentProps): JSX.Element {
       </a>
       <p>{data.author}</p>
       <p>{data.summary}</p>
-      <ul>
+      <h2>Episodes</h2>
+      <List>
         {data.episodes.map((episode) => {
           return (
-            <li key={episode.id}>
-              <p>{episode.title}</p>
-              <p>{episode.pubDate}</p>
-              <p>{episode.description}</p>
-            </li>
+            <ListItem key={episode.id}>
+              <h3>{episode.title}</h3>
+              <p>{episode.pubDate.toLocaleString()}</p>
+              <p>{episode.summary}</p>
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: sanitizeHtml(episode.description),
+                }}
+              />
+            </ListItem>
           );
         })}
-      </ul>
+      </List>
     </Container>
   );
 }
@@ -118,4 +126,18 @@ const Container = styled.div`
 
 const Img = styled.img`
   max-width: 20rem;
+`;
+
+const List = styled.ul`
+  width: 100%;
+  list-style: none;
+`;
+
+const ListItem = styled.li`
+  ${cardEffect}
+
+  & h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+  }
 `;

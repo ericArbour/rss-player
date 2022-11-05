@@ -10,7 +10,7 @@ export interface Episode {
   id: string;
   title: string;
   link: string;
-  pubDate: string;
+  pubDate: Date;
   description: string;
   episodeType: typeof podcastEpisodeTypes[number] | null;
   episodeNumber: number | string | null;
