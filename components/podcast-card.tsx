@@ -23,6 +23,7 @@ export function PodcastCard({ podcast }: PodcastCardProps): JSX.Element {
 const CardLink = styled.a`
   text-decoration: none;
   max-width: 18.75rem;
+  padding: 1.5rem;
   ${cardEffect}
 
   & h2 {

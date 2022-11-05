@@ -2,16 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import { unstable_getServerSession } from "next-auth/next";
 import { GetServerSideProps } from "next";
 import { Session } from "next-auth";
-import sanitizeHtml from "sanitize-html";
-
-import { authOptions } from "../api/auth/[...nextauth]";
-import { RssFeed } from "../../db/models";
-import { RssFeedDto } from "../../types";
-import { fetchPodcast } from "../../utils/rss";
-import { Main } from "../../components/main";
-import { SignedInHeader } from "../../components/signed-in-header";
 import styled from "styled-components";
-import { cardEffect } from "../../utils/style-mixins";
+import Link from "next/link";
+
+import { authOptions } from "../../api/auth/[...nextauth]";
+import { RssFeed } from "../../../db/models";
+import { RssFeedDto } from "../../../types";
+import { fetchPodcast } from "../../../utils/rss";
+import { Main } from "../../../components/main";
+import { SignedInHeader } from "../../../components/signed-in-header";
+import { cardEffect } from "../../../utils/style-mixins";
+import { PodcastPageContainer } from "../../../components/podcast-page-container";
+import { PodcastPageImg } from "../../../components/podcast-page-img";
 
 interface PodcastProps {
   session: Session;
@@ -89,10 +91,10 @@ function Content({ rssFeed }: ContentProps): JSX.Element {
   }
 
   return (
-    <Container>
+    <PodcastPageContainer>
       <h2>{data.title}</h2>
       <a href={data.link} target="_blank" rel="noreferrer">
-        <Img src={data.imageSrc} alt="Title Image" />
+        <PodcastPageImg src={data.imageSrc} alt="Title Image" />
       </a>
       <p>{data.author}</p>
       <p>{data.summary}</p>
@@ -101,32 +103,22 @@ function Content({ rssFeed }: ContentProps): JSX.Element {
         {data.episodes.map((episode) => {
           return (
             <ListItem key={episode.id}>
-              <h3>{episode.title}</h3>
-              <p>{episode.pubDate.toLocaleString()}</p>
-              <p>{episode.summary}</p>
-              <p
-                dangerouslySetInnerHTML={{
-                  __html: sanitizeHtml(episode.description),
-                }}
-              />
+              <Link
+                href={`/podcasts/${data.id}/${encodeURIComponent(episode.id)}`}
+                passHref
+              >
+                <FullAnchor>
+                  <h3>{episode.title}</h3>
+                  <p>{episode.pubDate.toLocaleString()}</p>
+                </FullAnchor>
+              </Link>
             </ListItem>
           );
         })}
       </List>
-    </Container>
+    </PodcastPageContainer>
   );
 }
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 50rem;
-`;
-
-const Img = styled.img`
-  max-width: 20rem;
-`;
 
 const List = styled.ul`
   width: 100%;
@@ -140,4 +132,9 @@ const ListItem = styled.li`
     margin: 0 0 1rem 0;
     font-size: 1rem;
   }
+`;
+
+const FullAnchor = styled.a`
+  padding: 1.5rem;
+  display: block;
 `;

@@ -2,7 +2,6 @@ import { css } from "styled-components";
 
 export const cardEffect = css`
   margin: 1rem;
-  padding: 1.5rem;
   text-align: left;
   color: inherit;
   border: 1px solid #eaeaea;
