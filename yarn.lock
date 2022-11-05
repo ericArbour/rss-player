@@ -284,15 +284,15 @@
   dependencies:
     tslib "^2.4.0"
 
-"@tanstack/query-core@4.13.4":
-  version "4.13.4"
-  resolved "https://registry.npmjs.org/@tanstack/query-core/-/query-core-4.13.4.tgz"
+"@tanstack/query-core@4.14.3":
+  version "4.14.3"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-4.14.3.tgz#9ab6763b61d5e491816483f3aeed771c1fbd657b"
 
-"@tanstack/react-query@^4.13.5":
-  version "4.13.5"
-  resolved "https://registry.npmjs.org/@tanstack/react-query/-/react-query-4.13.5.tgz"
+"@tanstack/react-query@^4.14.3":
+  version "4.14.3"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-4.14.3.tgz#3bafea000480463de35721c742265730e2973550"
   dependencies:
-    "@tanstack/query-core" "4.13.4"
+    "@tanstack/query-core" "4.14.3"
     use-sync-external-store "^1.2.0"
 
 "@types/debug@^4.1.7":
