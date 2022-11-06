@@ -14,6 +14,7 @@ import { SignedInHeader } from "../../../components/signed-in-header";
 import { cardEffect } from "../../../utils/style-mixins";
 import { PodcastPageContainer } from "../../../components/podcast-page-container";
 import { PodcastPageImg } from "../../../components/podcast-page-img";
+import { Loading } from "../../../components/Loading";
 
 interface PodcastProps {
   session: Session;
@@ -84,7 +85,7 @@ function Content({ rssFeed }: ContentProps): JSX.Element {
     fetchPodcast(rssFeed)
   );
 
-  if (status === "loading") return <div>Loading...</div>;
+  if (status === "loading") return <Loading />;
   if (status === "error") {
     console.error(error);
     return <div>Something went wrong...</div>;

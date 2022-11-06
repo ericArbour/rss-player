@@ -5,6 +5,7 @@ interface MainProps {
 }
 
 export const Main = styled.main<MainProps>`
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: ${({ centerVertically }): string =>

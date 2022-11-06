@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Podcast, RssFeedDto } from "../types";
 import { queryClient } from "../utils/react-query";
 import { fetchPodcast } from "../utils/rss";
+import { Loading } from "./Loading";
 import { PodcastCard } from "./podcast-card";
 
 interface PodcastCardsProps {
@@ -39,7 +40,7 @@ export function PodcastCards({ rssFeeds }: PodcastCardsProps): JSX.Element {
     return { rejects, podcasts };
   });
 
-  if (status === "loading") return <div>Loading...</div>;
+  if (status === "loading") return <Loading />;
   if (status === "error") {
     console.error(error);
     return <div>Something went wrong...</div>;

@@ -14,6 +14,7 @@ import { useMemo } from "react";
 import { useRouter } from "next/router";
 import { PodcastPageContainer } from "../../../components/podcast-page-container";
 import { PodcastPageImg } from "../../../components/podcast-page-img";
+import { Loading } from "../../../components/Loading";
 
 interface PodcastEpisodeProps {
   session: Session;
@@ -89,7 +90,7 @@ function Content({ rssFeed }: ContentProps): JSX.Element {
     return data.episodes.find((episode) => episode.id === query["episode"]);
   }, [data, query]);
 
-  if (status === "loading") return <div>Loading...</div>;
+  if (status === "loading") return <Loading />;
   if (status === "error" || !episode) {
     console.error(error);
     return <div>Something went wrong...</div>;
