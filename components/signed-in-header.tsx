@@ -30,6 +30,8 @@ const Header = styled.header`
   width: 100%;
   padding: 0.5rem;
   display: flex;
+  flex-wrap: 0.5rem;
+  gap: 1rem;
   border-bottom: 1px solid #eaeaea;
   justify-content: space-between;
   align-items: center;

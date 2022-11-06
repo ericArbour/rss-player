@@ -14,7 +14,7 @@ export function PodcastCard({ podcast }: PodcastCardProps): JSX.Element {
         <h2>{podcast.title}</h2>
         {/* next/image can't be used because the domains are not statically known */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={podcast.imageSrc} alt="Title Image" width="100%" />
+        <PodcastImg src={podcast.imageSrc} />
       </CardLink>
     </Link>
   );
@@ -36,4 +36,9 @@ const CardLink = styled.a`
     font-size: 1.25rem;
     line-height: 1.5;
   }
+`;
+
+const PodcastImg = styled.img`
+  width: 100%;
+  aspect-ratio: 1;
 `;

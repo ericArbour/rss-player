@@ -100,7 +100,7 @@ function Content({ rssFeed }: ContentProps): JSX.Element {
     <PodcastPageContainer>
       <h2>{data.title}</h2>
       <a href={data.link} target="_blank" rel="noreferrer">
-        <PodcastPageImg src={data.imageSrc} alt="Title Image" />
+        <PodcastPageImg src={data.imageSrc} />
       </a>
       <p>{data.author}</p>
       <p>{data.summary}</p>
