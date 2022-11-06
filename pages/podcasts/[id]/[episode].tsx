@@ -103,7 +103,7 @@ function Content({ rssFeed }: ContentProps): JSX.Element {
       </a>
       <p>{data.author}</p>
       <p>{data.summary}</p>
-      <h2>Episode</h2>
+      <h2>{episode.title}</h2>
       {episode.file && (
         <audio controls>
           <source src={episode.file.src} type={episode.file.type} />
