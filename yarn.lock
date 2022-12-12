@@ -2166,9 +2166,9 @@ sequelize-pool@^7.1.0:
   version "7.1.0"
   resolved "https://registry.npmjs.org/sequelize-pool/-/sequelize-pool-7.1.0.tgz"
 
-sequelize@^6.25.3:
-  version "6.25.3"
-  resolved "https://registry.npmjs.org/sequelize/-/sequelize-6.25.3.tgz"
+sequelize@^6.27.0:
+  version "6.27.0"
+  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-6.27.0.tgz#b267e76997df57842cc1e2c1c1d7e02405bcdb9c"
   dependencies:
     "@types/debug" "^4.1.7"
     "@types/validator" "^13.7.1"
