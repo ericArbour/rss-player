@@ -2091,9 +2091,9 @@ resolve@^2.0.0-next.3:
     path-parse "^1.0.7"
     supports-preserve-symlinks-flag "^1.0.0"
 
-retry-as-promised@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.npmjs.org/retry-as-promised/-/retry-as-promised-6.1.0.tgz"
+retry-as-promised@^7.0.3:
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/retry-as-promised/-/retry-as-promised-7.0.3.tgz#ca3c13b15525a7bfbf0f56d2996f0e75649d068b"
 
 reusify@^1.0.4:
   version "1.0.4"
@@ -2166,9 +2166,9 @@ sequelize-pool@^7.1.0:
   version "7.1.0"
   resolved "https://registry.npmjs.org/sequelize-pool/-/sequelize-pool-7.1.0.tgz"
 
-sequelize@^6.25.3:
-  version "6.25.3"
-  resolved "https://registry.npmjs.org/sequelize/-/sequelize-6.25.3.tgz"
+sequelize@^6.28.0:
+  version "6.28.0"
+  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-6.28.0.tgz#d6bc4e36647e8501635467c0777c45a33f5d5ba8"
   dependencies:
     "@types/debug" "^4.1.7"
     "@types/validator" "^13.7.1"
@@ -2179,7 +2179,7 @@ sequelize@^6.25.3:
     moment "^2.29.1"
     moment-timezone "^0.5.34"
     pg-connection-string "^2.5.0"
-    retry-as-promised "^6.1.0"
+    retry-as-promised "^7.0.3"
     semver "^7.3.5"
     sequelize-pool "^7.1.0"
     toposort-class "^1.0.1"
