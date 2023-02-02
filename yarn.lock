@@ -1715,9 +1715,9 @@ natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/natural-compare/-/natural-compare-1.4.0.tgz"
 
-next-auth@^4.15.1:
-  version "4.15.1"
-  resolved "https://registry.yarnpkg.com/next-auth/-/next-auth-4.15.1.tgz#d427468a99fdd488fee6c67cc8fdb7f16ffe1df6"
+next-auth@^4.19.2:
+  version "4.19.2"
+  resolved "https://registry.yarnpkg.com/next-auth/-/next-auth-4.19.2.tgz#8dbdc4886d4f006e7c67c77ab56e0aec5693064d"
   dependencies:
     "@babel/runtime" "^7.16.3"
     "@panva/hkdf" "^1.0.1"
